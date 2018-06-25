@@ -12,7 +12,7 @@ library(reshape2)
 require(gridExtra)
 
 ### LOAD 
-setwd("/Users/matthewhull/r/apple_watch_health_analysis")
+setwd("/Users/matthewhull/r/apple_watch_workouts")
 xml <- xmlParse("export.xml")
 wkdf <- XML:::xmlAttrsToDataFrame(xml["//Workout"])
 rdf <- XML:::xmlAttrsToDataFrame(xml["//Record"])
@@ -152,7 +152,7 @@ ggplot(subset(df, ! workoutType %in% c("swimming")), aes(x=duration, y=..count..
 ggplot(subset(df,!is.na(hr_value)), aes(hr_value,y=..density..)) +
   geom_density(aes(fill=workoutType),alpha=.7, show.legend=F) +
   facet_wrap(~ workoutType) +
-  scale_fill_viridis(discrete=T)  
+  scale_fill_viridis(discrete=T) +
   xlab("Heart Rate") +
   ggtitle("Heart Rate Density by Workout Type") 
   
@@ -226,7 +226,13 @@ colnames(final_df) <- c("id","duration","distance","energy","source","hr","activ
 # 
 
 final_df$source <- as.numeric(final_df$source)
-final_df$activity <- as.numeric(as.factor(final_df$activity))
+# originally making factors of all workout types but wanted to only differentiate
+# between a workout of 'other' vs. any other type
+# final_df$activity <- as.numeric(as.factor(final_df$activity))
+final_df$activity[final_df$activity!='other'] <- 1
+final_df$activity[final_df$activity=='other'] <- 0
+final_df$activity <- as.numeric(final_df$activity)
+
 save(final_df, file="apple_health_data.Rdata")
 write_csv(final_df, "apple_health_data.csv")
 
