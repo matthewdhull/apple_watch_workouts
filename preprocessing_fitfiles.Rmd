@@ -1,10 +1,8 @@
 ---
 title: "Preprocessing Fitfiles"
 author: "Matthew Hull"
-date: "5/26/2018"
-output:
-  pdf_document: default
-  html_document: default
+date: "`r format(Sys.Date())`"
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
