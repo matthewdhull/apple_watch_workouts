@@ -102,6 +102,6 @@ ENV/
 *.Rdata
 
 # misc.
-../fitparse/.idea/
-../fitparse/fitparse_apple_activity.py
-../fitparse/fitparse_nikeplus.py
+/fitparse/.idea/
+/fitparse/fitparse_apple_activity.py
+/fitparse/fitparse_nikeplus.py
