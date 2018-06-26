@@ -6,7 +6,6 @@ __pycache__/
 # C extensions
 *.so
 *.pdf
-*.png
 *.jpg
 *.xlsx
 *.pages
@@ -101,3 +100,8 @@ ENV/
 *.Rhistory
 *.RData
 *.Rdata
+
+# misc.
+../fitparse/.idea/
+../fitparse/fitparse_apple_activity.py
+../fitparse/fitparse_nikeplus.py
