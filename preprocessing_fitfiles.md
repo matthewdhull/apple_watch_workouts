@@ -24,7 +24,7 @@ ggplot(df, aes(month)) +
   ggtitle("All Time Total Workouts per Month")
 ```
 
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-4-1.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-4-1.png" width="672" />
 
 ``` r
 ggplot(df, mapping=aes(duration)) + 
@@ -38,7 +38,7 @@ ggplot(df, mapping=aes(duration)) +
   ggtitle("Workout Duration by Month")
 ```
 
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-5-1.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-5-1.png" width="672" />
 
 ``` r
 dist_df <- subset(df, !is.na(totalDistance))
@@ -56,7 +56,7 @@ dat1 <- ggplot_build(p1)$data[[1]]
 p1 + geom_segment(data=dat1, aes(x=xmin, xend=xmax, y=middle, yend=middle), color='white',size=.5)
 ```
 
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-6-1.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-6-1.png" width="672" />
 
 In some cases, the totalEnergyBurned variable was not included. The Fitfile shows values of '0' in these instances. Due to the large number of missing values, I decided to calculate the calorie burns by using the Compendium of Physical Activities provided by the National Institutes of Health (NIH).
 
@@ -65,10 +65,11 @@ In some cases, the totalEnergyBurned variable was not included. The Fitfile show
 A mph speed variable was calculated from the distance and duration fields since the metabolic equivalents (METS) used miles per hour (mph). Next, the closest MET is selected based on the activity (running or cycling) and mph value that best matched.
 
 <Example MET match>
+### calculate calories
+
+calories = (kg \* MET) \* (min/60) from <https://download.lww.com/wolterskluwer_vitalstream_com/PermaLink/MSS/A/MSS_43_8_2011_06_13_AINSWORTH_202093_SDC1.pdf>
+
 ``` r
-# calculate calories
-# calories = (kg * MET) * (min/60)
-# from https://download.lww.com/wolterskluwer_vitalstream_com/PermaLink/MSS/A/MSS_43_8_2011_06_13_AINSWORTH_202093_SDC1.pdf
 physical_activity <- read.csv('compendium_physical_activity_partial.csv', header=T,sep=",")
 df['mets'] = NA
 cycling_mets = subset.data.frame(physical_activity, major_heading=='bicycling')
@@ -136,9 +137,9 @@ ggplot(subset(actual_cals, workoutType=='cycling'), mapping = aes(estTotalEnergy
   ggtitle('Total and Calculated Energy Burns - Cycling')
 ```
 
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-8-1.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-8-1.png" width="672" />
 
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-9-1.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-9-1.png" width="672" />
 
 ``` r
 df['energy'] <- NA
@@ -202,13 +203,7 @@ ggplot(df, aes(x=sourceName.x,y=totalDistance)) +
   ggtitle("Workout Distance per App")
 ```
 
-    ## Warning: Removed 254 rows containing non-finite values (stat_boxplot).
-
-    ## Warning: Removed 254 rows containing non-finite values (stat_summary).
-
-    ## Warning: Removed 254 rows containing missing values (geom_point).
-
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-1.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-1.png" width="672" />
 
 ``` r
 # workout duration distribution by workout type
@@ -224,7 +219,7 @@ ggplot(sport_df, aes(x=duration*60, y=..count..)) +
   ggtitle("Workout Duration by Workout Type")
 ```
 
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-2.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-2.png" width="672" />
 
 ``` r
 # Heart Rate Density by workout Type
@@ -236,7 +231,7 @@ ggplot(subset(sport_df,!is.na(hr_value)), aes(hr_value,y=..density..)) +
   ggtitle("Heart Rate Density by Workout Type") 
 ```
 
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-3.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-3.png" width="672" />
 
 ``` r
 # fit a model to predict missing HR values
@@ -272,21 +267,30 @@ sport_df$imputed_hr <- round(hr.imp,0)
 ``` r
 # deterministic imputation of hr
 p1 <- ggplot(mapping=aes(x=pred.hr, y=sport_df$imputed_hr)) + 
-  geom_point(alpha=.4) +  
+  geom_point(color=rgb(1, 1, 0), alpha=.4) +  
   ylab("Imputed HR") +
   xlab("Regression Prediction") +
-  ggtitle("Deterministic Imputation of HR Variable")
+  ggtitle("Deterministic Imputation of HR Variable") + theme_dark()
 
 # Heart Rate Density by workout Type
 p3 <- ggplot(sport_df, aes(y=..density..)) +
-  geom_density(aes(x=imputed_hr, fill="imputed"), alpha=.25, na.rm=T) +  
-  geom_density(aes(x=hr_value, fill="measured"), alpha=.25, na.rm=T) +
-  scale_fill_manual(values=c(rgb(28/255,112/255,107/255), rgb(252/255,230/255,30/255))) +  
+  geom_density(aes(x=hr_value, fill="actual"), alpha=.5, na.rm=T) +  
+  geom_density(aes(x=imputed_hr, fill="imputed"), alpha=.5, na.rm=T) +  
+  scale_fill_manual(values=c(rgb(1,0,0,.7),rgb(1,1,0,.7))) +  
+  theme_bw() +
   facet_wrap(~ workoutType) +
   xlab("Heart Rate") +
   ggtitle("Heart Rate Density by Workout Type, Deterministic Imputation") +
   guides(fill=guide_legend(title="HR Data Source"))
 
+
+# compare both imputation methods
+grid.arrange(p1,p3)
+```
+
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-11-1.png" width="672" />
+
+``` r
 # random imputation of hr
 
 pred.random.hr <- rnorm(nrow(hr_df), predict(lm.imputation, hr_df))
@@ -296,25 +300,24 @@ random.hr.imp <- impute(sport_df$hr_value, draw)
 sport_df$random_imputed_hr <- round(random.hr.imp,0)
 
 p2 <- ggplot(mapping=aes(x=pred.random.hr, y=sport_df$random_imputed_hr)) + 
-  geom_point(alpha=.4) +
+  geom_point(color='blue', alpha=.5) +
   ylab("Imputed HR") +
   xlab("Regression Prediction") +
   ggtitle("Random Imputation of HR Variable")
 
 p4 <- ggplot(sport_df, aes(y=..density..)) +
-  geom_density(aes(x=random_imputed_hr, fill="R-imputed"), alpha=.5) +  
-  geom_density(aes(x=hr_value, fill="measured"), alpha=.7,na.rm=T) +
-  scale_fill_manual(values=c(rgb(28/255,112/255,107/255), rgb(252/255,230/255,30/255))) +  
+  geom_density(aes(x=hr_value, fill='actual'),alpha=.5,na.rm=T) +
+  geom_density(aes(x=random_imputed_hr, fill='imputed'),alpha=.5) +   
+  scale_fill_manual(values=c(rgb(1,0,0,.7),rgb(0,0,1,.7))) +    
   facet_wrap(~ workoutType) +
   xlab("Heart Rate") +
   ggtitle("Heart Rate Density by Workout Type, Random Imputation") +
   guides(fill=guide_legend(title="HR Data Source"))
 
-# compare both imputation methods
-grid.arrange(p1,p2,p3,p4)
+grid.arrange(p2,p4)
 ```
 
-![](preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-11-1.png)
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png" width="672" />
 
 ``` r
 sport_df['id'] <- seq(1:nrow(sport_df))

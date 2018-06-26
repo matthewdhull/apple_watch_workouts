@@ -6,7 +6,8 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.retina = 2)
+
 ```
 
 
@@ -110,10 +111,13 @@ In some cases, the totalEnergyBurned variable was not included.  The Fitfile sho
 A mph speed variable was calculated from the distance and duration fields since the metabolic equivalents (METS) used miles per hour (mph).   Next, the closest MET is selected based on the activity (running or cycling) and mph value that best matched.  
 
 <Example MET match>
+
+
+### calculate calories
+calories = (kg * MET) * (min/60)
+from https://download.lww.com/wolterskluwer_vitalstream_com/PermaLink/MSS/A/MSS_43_8_2011_06_13_AINSWORTH_202093_SDC1.pdf
+
 ```{r message=FALSE, warning=FALSE}
-# calculate calories
-# calories = (kg * MET) * (min/60)
-# from https://download.lww.com/wolterskluwer_vitalstream_com/PermaLink/MSS/A/MSS_43_8_2011_06_13_AINSWORTH_202093_SDC1.pdf
 physical_activity <- read.csv('compendium_physical_activity_partial.csv', header=T,sep=",")
 df['mets'] = NA
 cycling_mets = subset.data.frame(physical_activity, major_heading=='bicycling')
@@ -195,7 +199,7 @@ ggplot(subset(actual_cals, workoutType=='running'), mapping = aes(estTotalEnergy
 ```
 
 
-```{r}
+```{r message=FALSE, warning=FALSE, results='hide'}
 df['energy'] <- NA
 
 # NA set to -1 for ease of comparison
@@ -313,21 +317,28 @@ sport_df$imputed_hr <- round(hr.imp,0)
 ```{r message=FALSE, warning=FALSE, results='hide'}
 # deterministic imputation of hr
 p1 <- ggplot(mapping=aes(x=pred.hr, y=sport_df$imputed_hr)) + 
-  geom_point(alpha=.4) +  
+  geom_point(color=rgb(1, 1, 0), alpha=.4) +  
   ylab("Imputed HR") +
   xlab("Regression Prediction") +
-  ggtitle("Deterministic Imputation of HR Variable")
+  ggtitle("Deterministic Imputation of HR Variable") + theme_dark()
 
 # Heart Rate Density by workout Type
 p3 <- ggplot(sport_df, aes(y=..density..)) +
-  geom_density(aes(x=imputed_hr, fill="imputed"), alpha=.25, na.rm=T) +  
-  geom_density(aes(x=hr_value, fill="measured"), alpha=.25, na.rm=T) +
-  scale_fill_manual(values=c(rgb(28/255,112/255,107/255), rgb(252/255,230/255,30/255))) +  
+  geom_density(aes(x=hr_value, fill="actual"), alpha=.5, na.rm=T) +  
+  geom_density(aes(x=imputed_hr, fill="imputed"), alpha=.5, na.rm=T) +  
+  scale_fill_manual(values=c(rgb(1,0,0,.7),rgb(1,1,0,.7))) +  
+  theme_bw() +
   facet_wrap(~ workoutType) +
   xlab("Heart Rate") +
   ggtitle("Heart Rate Density by Workout Type, Deterministic Imputation") +
   guides(fill=guide_legend(title="HR Data Source"))
 
+
+# compare both imputation methods
+grid.arrange(p1,p3)
+```
+
+```{r message=FALSE, warning=FALSE, results='hide'}
 # random imputation of hr
 
 pred.random.hr <- rnorm(nrow(hr_df), predict(lm.imputation, hr_df))
@@ -337,23 +348,24 @@ random.hr.imp <- impute(sport_df$hr_value, draw)
 sport_df$random_imputed_hr <- round(random.hr.imp,0)
 
 p2 <- ggplot(mapping=aes(x=pred.random.hr, y=sport_df$random_imputed_hr)) + 
-  geom_point(alpha=.4) +
+  geom_point(color='blue', alpha=.5) +
   ylab("Imputed HR") +
   xlab("Regression Prediction") +
   ggtitle("Random Imputation of HR Variable")
 
 p4 <- ggplot(sport_df, aes(y=..density..)) +
-  geom_density(aes(x=random_imputed_hr, fill="R-imputed"), alpha=.5) +  
-  geom_density(aes(x=hr_value, fill="measured"), alpha=.7,na.rm=T) +
-  scale_fill_manual(values=c(rgb(28/255,112/255,107/255), rgb(252/255,230/255,30/255))) +  
+  geom_density(aes(x=hr_value, fill='actual'),alpha=.5,na.rm=T) +
+  geom_density(aes(x=random_imputed_hr, fill='imputed'),alpha=.5) +   
+  scale_fill_manual(values=c(rgb(1,0,0,.7),rgb(0,0,1,.7))) +    
   facet_wrap(~ workoutType) +
   xlab("Heart Rate") +
   ggtitle("Heart Rate Density by Workout Type, Random Imputation") +
   guides(fill=guide_legend(title="HR Data Source"))
 
-# compare both imputation methods
-grid.arrange(p1,p2,p3,p4)
+grid.arrange(p2,p4)
+```
 
+```{r}
 sport_df['id'] <- seq(1:nrow(sport_df))
 
 final_df <- sport_df[,c(11,1, 2, 8, 3, 10, 5)]
