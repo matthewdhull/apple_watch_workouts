@@ -27,6 +27,7 @@ library(reshape2)
 require(gridExtra)
 library(spatstat.utils)
 library(latex2exp)
+library(sqldf)
 
 ### LOAD 
 setwd("/Users/matthewhull/r/apple_watch_workouts")
@@ -56,7 +57,10 @@ TODO: make this into table.
 colnames(df) <- c('timestamp', 'duration', 'totalDistance', 'totalEnergyBurned', 'sourceName.x', 'hr_value', 'workoutType', 'mph')
 
 df['month'] <- lubridate::month(df$timestamp, label=T)
+df['ymd'] <- NA
+df['ymd'] <- lubridate::date(df$timestamp)
 df['timestamp'] <- NULL
+
 
 df$workoutType <- as.character(df$workoutType)
 df$workoutType[df$workoutType=="fitness_equipment"] = "elliptical"
@@ -105,6 +109,27 @@ p1 + geom_segment(data=dat1, aes(x=xmin, xend=xmax, y=middle, yend=middle), colo
 ```
 
 In some cases, the totalEnergyBurned variable was not included.  The Fitfile shows values of '0' in these instances.  Due to the large number of missing values, I decided to calculate the calorie burns by using the Compendium of Physical Activities provided by the National Institutes of Health (NIH).  
+
+
+## Missing Data
+```{r message=FALSE, warning=FALSE, results='hide'}
+ggplot(df, aes(ymd,hr_value)) +
+  geom_bar(stat='identity') +
+  geom_vline(color='red', xintercept=df$ymd[which(is.na(df$hr_value))]) +
+  ylab("Heart Rate") +
+  xlab("Workout Date") +
+  ggtitle("Missing HR Observations over Time")
+```
+
+```{r message=FALSE, warning=FALSE, results='hide'}
+ggplot(df, aes(ymd,totalEnergyBurned)) +
+  geom_bar(stat='identity') +
+  geom_vline(color='blue', xintercept=df$ymd[which(is.na(df$hr_value))]) +
+  ylab("Calories") +
+  xlab("Workout Date") +
+  ggtitle("Missing Calorie Burn Observations over Time")
+```
+
 
 <More about how to calculate a calorie burn using a MET>
 
@@ -200,12 +225,23 @@ ggplot(subset(actual_cals, workoutType=='running'), mapping = aes(estTotalEnergy
 
 
 ```{r message=FALSE, warning=FALSE, results='hide'}
+ggplot(df, aes(ymd,totalEnergyBurned)) +
+  geom_bar(data=df, aes(ymd,estTotalEnergyBurned,fill='blue'), stat='identity',alpha=.7) +  
+  geom_bar(stat='identity',aes(fill='red'),alpha=.7) +
+  ylab("Calories Burned") +
+  xlab("Workout Date") +
+  scale_fill_identity(guide='legend', name='', labels=c('estimated', 'actual')) +
+  ggtitle("Actual and Estimated Calorie Burns")
+```
+
+
+```{r message=FALSE, warning=FALSE, results='hide'}
 df['energy'] <- NA
 
 # NA set to -1 for ease of comparison
 e1 <- df[,3]
 e1[which(is.na(e1))] <- -1
-e2 <- df[,9]
+e2 <- df[,11]
 e2[which(is.na(e2))] <- -1
 e2 <- round(e2,0)
 
@@ -264,7 +300,6 @@ ggplot(df, aes(x=sourceName.x,y=totalDistance)) +
 # workout duration distribution by workout type
 # rowing, swimming, walking are too small to consider
 sport_df <- subset.data.frame(df, ! workoutType %in% c("swimming", "rowing", "walking"))
-rm(df)
 
 ggplot(sport_df, aes(x=duration*60, y=..count..)) + 
   geom_histogram(aes(fill=workoutType), color='gray28', binwidth = 7, alpha=.75, show.legend = F) +
@@ -313,6 +348,19 @@ hr.imp <- impute(sport_df$hr_value, pred.hr)
 
 sport_df$imputed_hr <- round(hr.imp,0)
 ```
+
+
+```{r message=F, warning=F, results='hide'}
+z <- sqldf("SELECT workoutTYpe, ymd, month, COUNT(*) AS count FROM df GROUP BY ymd")
+zz <- aggregate(count ~ month, FUN = mean, data=z)
+ggplot(zz,aes(month,count)) + 
+  geom_bar(aes(fill=month),stat='identity', show.legend=F) +
+  scale_fill_viridis(option="B",discrete=T) +
+  ggtitle("Average Workouts per Day")
+
+rm(z,zz)
+```
+
 
 ```{r message=FALSE, warning=FALSE, results='hide'}
 # deterministic imputation of hr
@@ -366,6 +414,9 @@ grid.arrange(p2,p4)
 ```
 
 ```{r}
+
+rm(df)
+
 sport_df['id'] <- seq(1:nrow(sport_df))
 
 final_df <- sport_df[,c(11,1, 2, 8, 3, 10, 5)]

@@ -101,6 +101,11 @@ ENV/
 *.RData
 *.Rdata
 
+#Tableau
+.tfl
+.twb
+.hyper
+
 # misc.
 /fitparse/.idea/
 /fitparse/fitparse_apple_activity.py

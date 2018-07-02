@@ -1,7 +1,7 @@
 Preprocessing Fitfiles
 ================
 Matthew Hull
-2018-06-26
+2018-07-02
 
 Distance from the fitfile was expressed in meters, converted to miles. Time is converted from seconds to hours.
 
@@ -59,6 +59,31 @@ p1 + geom_segment(data=dat1, aes(x=xmin, xend=xmax, y=middle, yend=middle), colo
 <img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-6-1.png" width="672" />
 
 In some cases, the totalEnergyBurned variable was not included. The Fitfile shows values of '0' in these instances. Due to the large number of missing values, I decided to calculate the calorie burns by using the Compendium of Physical Activities provided by the National Institutes of Health (NIH).
+
+Missing Data
+------------
+
+``` r
+ggplot(df, aes(ymd,hr_value)) +
+  geom_bar(stat='identity') +
+  geom_vline(color='red', xintercept=df$ymd[which(is.na(df$hr_value))]) +
+  ylab("Heart Rate") +
+  xlab("Workout Date") +
+  ggtitle("Missing HR Observations over Time")
+```
+
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-7-1.png" width="672" />
+
+``` r
+ggplot(df, aes(ymd,totalEnergyBurned)) +
+  geom_bar(stat='identity') +
+  geom_vline(color='blue', xintercept=df$ymd[which(is.na(df$hr_value))]) +
+  ylab("Calories") +
+  xlab("Workout Date") +
+  ggtitle("Missing Calorie Burn Observations over Time")
+```
+
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-8-1.png" width="672" />
 
 <More about how to calculate a calorie burn using a MET>
 
@@ -137,9 +162,21 @@ ggplot(subset(actual_cals, workoutType=='cycling'), mapping = aes(estTotalEnergy
   ggtitle('Total and Calculated Energy Burns - Cycling')
 ```
 
-<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-8-1.png" width="672" />
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-1.png" width="672" />
 
-<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-9-1.png" width="672" />
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-11-1.png" width="672" />
+
+``` r
+ggplot(df, aes(ymd,totalEnergyBurned)) +
+  geom_bar(data=df, aes(ymd,estTotalEnergyBurned,fill='blue'), stat='identity',alpha=.7) +  
+  geom_bar(stat='identity',aes(fill='red'),alpha=.7) +
+  ylab("Calories Burned") +
+  xlab("Workout Date") +
+  scale_fill_identity(guide='legend', name='', labels=c('estimated', 'actual')) +
+  ggtitle("Actual and Estimated Calorie Burns")
+```
+
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png" width="672" />
 
 ``` r
 df['energy'] <- NA
@@ -147,7 +184,7 @@ df['energy'] <- NA
 # NA set to -1 for ease of comparison
 e1 <- df[,3]
 e1[which(is.na(e1))] <- -1
-e2 <- df[,9]
+e2 <- df[,11]
 e2[which(is.na(e2))] <- -1
 e2 <- round(e2,0)
 
@@ -203,13 +240,12 @@ ggplot(df, aes(x=sourceName.x,y=totalDistance)) +
   ggtitle("Workout Distance per App")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-1.png" width="672" />
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-13-1.png" width="672" />
 
 ``` r
 # workout duration distribution by workout type
 # rowing, swimming, walking are too small to consider
 sport_df <- subset.data.frame(df, ! workoutType %in% c("swimming", "rowing", "walking"))
-rm(df)
 
 ggplot(sport_df, aes(x=duration*60, y=..count..)) + 
   geom_histogram(aes(fill=workoutType), color='gray28', binwidth = 7, alpha=.75, show.legend = F) +
@@ -219,7 +255,7 @@ ggplot(sport_df, aes(x=duration*60, y=..count..)) +
   ggtitle("Workout Duration by Workout Type")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-2.png" width="672" />
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-13-2.png" width="672" />
 
 ``` r
 # Heart Rate Density by workout Type
@@ -231,7 +267,7 @@ ggplot(subset(sport_df,!is.na(hr_value)), aes(hr_value,y=..density..)) +
   ggtitle("Heart Rate Density by Workout Type") 
 ```
 
-<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-3.png" width="672" />
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-13-3.png" width="672" />
 
 ``` r
 # fit a model to predict missing HR values
@@ -265,6 +301,21 @@ sport_df$imputed_hr <- round(hr.imp,0)
 ```
 
 ``` r
+z <- sqldf("SELECT workoutTYpe, ymd, month, COUNT(*) AS count FROM df GROUP BY ymd")
+zz <- aggregate(count ~ month, FUN = mean, data=z)
+ggplot(zz,aes(month,count)) + 
+  geom_bar(aes(fill=month),stat='identity', show.legend=F) +
+  scale_fill_viridis(option="B",discrete=T) +
+  ggtitle("Average Workouts per Day")
+```
+
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-14-1.png" width="672" />
+
+``` r
+rm(z,zz)
+```
+
+``` r
 # deterministic imputation of hr
 p1 <- ggplot(mapping=aes(x=pred.hr, y=sport_df$imputed_hr)) + 
   geom_point(color=rgb(1, 1, 0), alpha=.4) +  
@@ -288,7 +339,7 @@ p3 <- ggplot(sport_df, aes(y=..density..)) +
 grid.arrange(p1,p3)
 ```
 
-<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-11-1.png" width="672" />
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-15-1.png" width="672" />
 
 ``` r
 # random imputation of hr
@@ -317,9 +368,11 @@ p4 <- ggplot(sport_df, aes(y=..density..)) +
 grid.arrange(p2,p4)
 ```
 
-<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png" width="672" />
+<img src="preprocessing_fitfiles_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-16-1.png" width="672" />
 
 ``` r
+rm(df)
+
 sport_df['id'] <- seq(1:nrow(sport_df))
 
 final_df <- sport_df[,c(11,1, 2, 8, 3, 10, 5)]
