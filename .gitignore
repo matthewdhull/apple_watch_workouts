@@ -27,7 +27,6 @@ lib64/
 parts/
 sdist/
 var/
-preprocessing_fitfiles_files/figure-gfm/
 *.egg-info/
 .installed.cfg
 *.egg
