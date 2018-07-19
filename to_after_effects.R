@@ -27,7 +27,7 @@ ae_df$id <- ae_df$col
 ae_df$col <- NULL
 ae_df <- ae_df[,c(2:4)]
 ae_df$totalDistance <- round(ae_df$totalDistance, 2)
-colnames(ae_df) <- c("mi", "mph", "mets")aejson <- toJSON(ae_df)
+colnames(ae_df) <- c("mi", "mph", "mets")
 aejson <- toJSON(ae_df)
 write(aejson, "data/cycle_workouts.json")
 
@@ -44,4 +44,3 @@ ggplot(t3, aes(variable,value)) +
   theme_dark() +
   theme(panel.grid = element_blank()) +
   facet_wrap(~col,nrow=10)
-
