@@ -100,6 +100,8 @@ ENV/
 *.Rhistory
 *.RData
 *.Rdata
+.Rproj
+.Rproj.user/
 
 #Tableau
 .tfl
@@ -110,3 +112,4 @@ ENV/
 /fitparse/.idea/
 /fitparse/fitparse_apple_activity.py
 /fitparse/fitparse_nikeplus.py
+
