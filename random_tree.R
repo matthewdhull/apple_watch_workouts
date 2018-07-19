@@ -156,7 +156,7 @@ query <- function(x,t) {
 # load 
 setwd("/Users/matthewhull/r/apple_watch_workouts")
 # load("apple_health_data.RData")
-load("fit_data.RData")
+load("data/fit_data.RData")
 df <- final_df[,2:ncol(final_df)] #eliminate id column
 
 
@@ -418,4 +418,4 @@ ggplot(exp2, mapping=aes(leaf_size, accuracy)) +
 # measure & plot accuracies
 
 
-save(ls,file="random_tree.Rdata")
+save(ls,file="data/random_tree.Rdata")

@@ -4,7 +4,7 @@ import pandas as pd
 from fitparse_session import fitparse_session
 
 """
-This is capable of handling 
+This handles: apple activity, strava, and nike +
 """
 
 # get all fit files
@@ -50,7 +50,7 @@ def process_appleactivity():
 appleactivity_df = process_appleactivity()
 
 df = pd.concat([nike_df,strava_df,appleactivity_df])
-pd.DataFrame.to_csv(df,'/Users/matthewhull/r/apple_watch_workouts/fit.csv')
+pd.DataFrame.to_csv(df,'/Users/matthewhull/r/apple_watch_workouts/data/fit.csv')
 print('done')
 
 # id,duration,distance,energy,source,hr,activity

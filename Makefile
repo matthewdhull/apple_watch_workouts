@@ -1,0 +1,1 @@
+ Rscript -e "rmarkdown::render('preprocessing_fitfiles.Rmd', clean=TRUE, output_format='github_document')"

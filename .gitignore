@@ -27,6 +27,7 @@ lib64/
 parts/
 sdist/
 var/
+preprocessing_fitfiles_files/figure-gfm/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -100,7 +101,7 @@ ENV/
 *.Rhistory
 *.RData
 *.Rdata
-.Rproj
+*.Rproj
 .Rproj.user/
 
 #Tableau
@@ -112,4 +113,8 @@ ENV/
 /fitparse/.idea/
 /fitparse/fitparse_apple_activity.py
 /fitparse/fitparse_nikeplus.py
+tableau/
+data/
+*.html
 
+.Rproj.user
