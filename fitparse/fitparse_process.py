@@ -25,6 +25,7 @@ def process_nike():
         df = pd.concat([df,tdf])
     return df
 
+print("processing Nike")
 nike_df = process_nike()
 
 
@@ -36,6 +37,7 @@ def process_strava():
         df = pd.concat([df,tdf])
     return df
 
+print("processing Strava")
 strava_df = process_strava()
 
 
@@ -47,6 +49,7 @@ def process_appleactivity():
         df = pd.concat([df,tdf])
     return df
 
+print("processing apple activity")
 appleactivity_df = process_appleactivity()
 
 df = pd.concat([nike_df,strava_df,appleactivity_df])
