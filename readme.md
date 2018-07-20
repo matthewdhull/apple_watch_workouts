@@ -20,4 +20,4 @@ Use `make preprocess` to only run the preprocessing steps and output to after ef
 
 Preprocessing data visualization and notes can be seen [here](preprocessing.md)
 
-- Use [random_tree.r](random_tree.r) to build random trees and random forests using classification on the fit_data.csv file.
+- Use [random_tree.R](random_tree.R) to build random trees and random forests using classification on the fit_data.csv file.
