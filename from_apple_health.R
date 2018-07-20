@@ -12,7 +12,7 @@ library(reshape2)
 require(gridExtra)
 
 ### LOAD 
-setwd("/Users/matthewhull/r/apple_watch_workouts")
+setwd("/Users/matthewhull/r/apple_watch_workouts/data")
 xml <- xmlParse("export.xml")
 wkdf <- XML:::xmlAttrsToDataFrame(xml["//Workout"])
 rdf <- XML:::xmlAttrsToDataFrame(xml["//Record"])

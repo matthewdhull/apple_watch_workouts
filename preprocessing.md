@@ -29,7 +29,7 @@ ggplot(df, aes(month)) +
   ggtitle("All Time Total Workouts per Month")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-4-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-4-1.png" width="672" />
 
 ``` r
 ggplot(df, mapping=aes(duration)) + 
@@ -43,7 +43,7 @@ ggplot(df, mapping=aes(duration)) +
   ggtitle("Workout Duration by Month")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-5-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-5-1.png" width="672" />
 
 ``` r
 dist_df <- subset(df, !is.na(totalDistance))
@@ -61,7 +61,7 @@ dat1 <- ggplot_build(p1)$data[[1]]
 p1 + geom_segment(data=dat1, aes(x=xmin, xend=xmax, y=middle, yend=middle), color='white',size=.5)
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-6-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-6-1.png" width="672" />
 
 In some cases, the totalEnergyBurned variable was not included. The
 Fitfile shows values of ‘0’ in these instances. Due to the large number
@@ -80,7 +80,7 @@ ggplot(df, aes(ymd,hr_value)) +
   ggtitle("Missing HR Observations over Time")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-7-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-7-1.png" width="672" />
 
 ``` r
 ggplot(df, aes(ymd,totalEnergyBurned)) +
@@ -91,7 +91,7 @@ ggplot(df, aes(ymd,totalEnergyBurned)) +
   ggtitle("Missing Calorie Burn Observations over Time")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-8-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-8-1.png" width="672" />
 
 <More about how to calculate a calorie burn using a MET>
 
@@ -175,9 +175,9 @@ ggplot(subset(actual_cals, workoutType=='cycling'), mapping = aes(estTotalEnergy
   ggtitle('Total and Calculated Energy Burns - Cycling')
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-10-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-10-1.png" width="672" />
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-11-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-11-1.png" width="672" />
 
 ``` r
 ggplot(df, aes(ymd,totalEnergyBurned)) +
@@ -189,7 +189,7 @@ ggplot(df, aes(ymd,totalEnergyBurned)) +
   ggtitle("Actual and Estimated Calorie Burns")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-12-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-12-1.png" width="672" />
 
 ``` r
 df['energy'] <- NA
@@ -253,7 +253,7 @@ ggplot(df, aes(x=sourceName.x,y=totalDistance)) +
   ggtitle("Workout Distance per App")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-13-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-13-1.png" width="672" />
 
 ``` r
 # workout duration distribution by workout type
@@ -268,7 +268,7 @@ ggplot(sport_df, aes(x=duration*60, y=..count..)) +
   ggtitle("Workout Duration by Workout Type")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-13-2.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-13-2.png" width="672" />
 
 ``` r
 # Heart Rate Density by workout Type
@@ -280,7 +280,7 @@ ggplot(subset(sport_df,!is.na(hr_value)), aes(hr_value,y=..density..)) +
   ggtitle("Heart Rate Density by Workout Type") 
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-13-3.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-13-3.png" width="672" />
 
 ``` r
 # fit a model to predict missing HR values
@@ -322,7 +322,7 @@ ggplot(zz,aes(month,count)) +
   ggtitle("Average Workouts per Day")
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-14-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-14-1.png" width="672" />
 
 ``` r
 rm(z,zz)
@@ -352,7 +352,7 @@ p3 <- ggplot(sport_df, aes(y=..density..)) +
 grid.arrange(p1,p3)
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-15-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-15-1.png" width="672" />
 
 ``` r
 # random imputation of hr
@@ -381,7 +381,7 @@ p4 <- ggplot(sport_df, aes(y=..density..)) +
 grid.arrange(p2,p4)
 ```
 
-<img src="preprocessing_fitfiles_files/figure-gfm/unnamed-chunk-16-1.png" width="672" />
+<img src="preprocessing_files/figure-gfm/unnamed-chunk-16-1.png" width="672" />
 
 ``` r
 rm(df)
