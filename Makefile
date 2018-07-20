@@ -1,10 +1,14 @@
-FITPARSE = python3 "fitparse/fitparse_process.py"
+fitparse = python3 "fitparse/fitparse_process.py"
 
-RENDER_RMD = Rscript -e 'library(rmarkdown); rmarkdown::render("preprocessing.Rmd", "github_document")'
+preprocess = Rscript -e 'library(rmarkdown); rmarkdown::render("preprocessing.Rmd", "github_document")'
 
-AFTER_EFFECTS = Rscript "to_after_effects.R"
+after_effects = Rscript "to_after_effects.R"
+
+preprocess:
+	$(preprocess)
+	$(after_effects)
 
 all:
-	$(FITPARSE)
-	$(RENDER_RMD)
-	$(AFTER_EFFECTS)
+	$(fitparse)
+	$(preprocess)
+	$(after_effects)

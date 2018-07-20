@@ -16,6 +16,8 @@ Use `make` for the following steps:
 - Output of the preprocessing is fit_data.csv, after_effects_data.Rdata, and preprocessing_fitfiles.md
 - Subset cycling data for use with an After Effects project using to_after_effects.R
 
+Use `make preprocess` to only run the preprocessing steps and output to after effects.
+
 Preprocessing data visualization and notes can be seen [here](preprocessing.md)
 
 - Use random_tree.r to build random trees and random forests using classification on the fit_data.csv file.
