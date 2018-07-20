@@ -257,8 +257,8 @@ ggplot(df, aes(x=sourceName.x,y=totalDistance)) +
 
 ``` r
 # workout duration distribution by workout type
-# rowing, swimming, walking are too small to consider
-sport_df <- subset.data.frame(df, ! workoutType %in% c("swimming", "rowing", "walking"))
+# rowing, swimming, walking, and hiking are too small to consider
+sport_df <- subset.data.frame(df, ! workoutType %in% c("swimming", "rowing", "walking", "hiking"))
 
 ggplot(sport_df, aes(x=duration*60, y=..count..)) + 
   geom_histogram(aes(fill=workoutType), color='gray28', binwidth = 7, alpha=.75, show.legend = F) +

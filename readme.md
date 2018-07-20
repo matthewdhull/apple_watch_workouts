@@ -18,6 +18,4 @@ Use `make` for the following steps:
 
 Preprocessing data visualization and notes can be seen [here](preprocessing.md)
 
-Machine Learning: 
-
 - Use random_tree.r to build random trees and random forests using classification on the fit_data.csv file.
