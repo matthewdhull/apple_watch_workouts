@@ -22,7 +22,7 @@ t1 <- t1[which(complete.cases(t1)),]
 
 # pipeline to after effects.
 library(jsonlite)
-ae_df <- t1[1:5,] #just a snippet for now
+ae_df <- t1 #just a snippet for now
 ae_df$id <- ae_df$col
 ae_df$col <- NULL
 ae_df <- ae_df[,c(2:4)]
