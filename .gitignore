@@ -12,6 +12,7 @@ __pycache__/
 *.txt
 *.xml
 *.csv
+*.tex
 
 # Distribution / packaging
 .Python

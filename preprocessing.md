@@ -1,7 +1,7 @@
 Preprocessing Fitfiles
 ================
 Matthew Hull
-2018-07-20
+2018-07-31
 
 Distance from the fitfile was expressed in meters, converted to miles.
 Time is converted from seconds to hours.
@@ -145,7 +145,7 @@ for (i in 1:nrow(df)) {
 
 ``` r
 # calories = (kg * MET) * (min/60)
-my_weight <- 68
+my_weight <- 65
 df['estTotalEnergyBurned'] <- (my_weight * df['mets']) * df['duration']
 
 # compare distributions of calculated vs. actual
@@ -388,7 +388,7 @@ rm(df)
 
 sport_df['id'] <- seq(1:nrow(sport_df))
 
-final_df <- sport_df[,c(11,1, 2, 8, 3, 10, 5)]
+final_df <- subset.data.frame(sport_df, select =c(id,duration,totalDistance,energy,sourceName.x, random_imputed_hr,workoutType))
 
 colnames(final_df) <- c("id","duration","distance","energy","source","hr","activity")
 

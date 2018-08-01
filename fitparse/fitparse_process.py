@@ -8,7 +8,8 @@ This handles: apple activity, strava, and nike +
 """
 
 # get all fit files
-os.chdir('/Users/matthewhull/Library/Mobile Documents/iCloud~com~altifondo~HealthFit/Documents/')
+os.chdir('/Users/matthewhull/Library/Mobile Documents/iCloud~com~altifondo~HealthFit/Documents/') # Matthew
+# os.chdir('/Users/matthewhull/Dropbox/HealthFitExporter/') # Dawson
 # only fit files
 strava_fitfiles = glob.glob('*Strava*.fit')
 nike_fitfiles = glob.glob('*Nike*.fit')
