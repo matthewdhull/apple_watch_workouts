@@ -118,3 +118,4 @@ data/
 *.html
 
 .Rproj.user
+hw1/keys.json
