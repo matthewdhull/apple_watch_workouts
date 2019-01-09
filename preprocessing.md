@@ -1,7 +1,7 @@
 Preprocessing Fitfiles
 ================
 Matthew Hull
-2018-10-01
+2019-01-10
 
 Distance from the fitfile was expressed in meters, converted to miles.
 Time is converted from seconds to hours.

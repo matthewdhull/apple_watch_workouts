@@ -54,7 +54,7 @@ print("processing apple activity")
 appleactivity_df = process_appleactivity()
 
 df = pd.concat([nike_df,strava_df,appleactivity_df])
-pd.DataFrame.to_csv(df,'/Users/matthewhull/r/apple_watch_workouts/data/fit.csv')
+pd.DataFrame.to_csv(df,'/Users/matthewhull/Library/Mobile Documents/com~apple~CloudDocs/Documents/r/apple_watch_workouts/fit.csv')
 print('done')
 
 # id,duration,distance,energy,source,hr,activity
