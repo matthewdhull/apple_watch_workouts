@@ -116,6 +116,10 @@ ENV/
 tableau/
 data/
 *.html
+.aux
+.out
+.synctex(busy)
+.DS_Store
 
 .Rproj.user
 hw1/keys.json
