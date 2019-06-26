@@ -57,4 +57,4 @@ df = pd.concat([nike_df,strava_df,appleactivity_df])
 pd.DataFrame.to_csv(df,'/Users/matthewhull/Library/Mobile Documents/com~apple~CloudDocs/Documents/r/apple_watch_workouts/data/fit.csv')
 print('done')
 
-# id,duration,distance,energy,source,hr,activity
+# timestamp, total_timer_time, total_distance, total_calories, source, avg_heart_rate, sport
