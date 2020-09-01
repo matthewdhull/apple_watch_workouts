@@ -1,0 +1,135 @@
+---
+title: "Preprocessing Fitfiles"
+author: "Matthew Hull"
+date: "`r format(Sys.Date())`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.retina = 2)
+
+```
+
+
+```{r echo=F, message=FALSE, warning=FALSE}
+library(XML)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(xts)
+library(zoo)
+library(spacetime)
+library(lubridate)
+library(RColorBrewer)
+library(viridis)
+library(mice)
+library(reshape2)
+require(gridExtra)
+library(spatstat.utils)
+library(latex2exp)
+library(sqldf)
+
+### LOAD 
+df <- read.csv('data/fit.csv', header=TRUE, sep=",")
+```
+
+
+Distance from the fitfile was expressed in meters, converted to miles.  Time is converted from seconds to hours.  
+```{r}
+df$total_distance = df$total_distance * .000621
+df$total_timer_time = round((df$total_timer_time / 60) / 60,2)
+df['mph'] = round(df$total_distance / df$total_timer_time,1)
+```
+
+Original values from fitfile converted to the desired fields
+TODO: make this into table. 
+# timestamp = timestamp
+# total_timer_time = duration
+# total_distance = totalDistance
+# total_calories = totalEnergyBurned
+# source = sourceName.x
+# avg_heart_rate = hr_value
+# sport = workoutType
+
+```{r echo=F}
+# rename cols to match with apple export
+colnames(df) <- c('timestamp', 'duration', 'totalDistance', 'totalEnergyBurned', 'sourceName.x', 'hr_value', 'workoutType', 'mph')
+
+df['month'] <- lubridate::month(df$timestamp, label=T)
+df['ymd'] <- NA
+df['ymd'] <- lubridate::date(df$timestamp)
+df['timestamp'] <- NULL
+
+
+df$workoutType <- as.character(df$workoutType)
+df$workoutType[df$workoutType=="fitness_equipment"] = "elliptical"
+df$workoutType[df$workoutType=="generic"] = "other"
+df$workoutType <- as.factor(df$workoutType)
+
+df <- subset(df, df$workoutType != "other")
+```
+
+
+```{r}
+ggplot(df, mapping=aes(duration)) + 
+  geom_density() + 
+  geom_vline(data=df, aes(xintercept = mean(df$duration))
+           , color="purple"
+           , size=0.75
+           , alpha=0.60
+           , lty="dashed") +  
+  facet_wrap(~month) +
+  ggtitle("Workout Duration by Month")
+
+```
+
+```{r}
+p <- ggplot(df[df$month=="Feb",], aes(duration)) + 
+  geom_density() +
+  theme_void()
+library(svglite)
+ggsave(file="~/Desktop/feb.svg", plot=p, width=10, height=8)
+```
+
+```{r}
+df_2016 <- subset(df, format(as.Date(df$ymd),"%Y")==2016)
+df_2017 <- subset(df, format(as.Date(df$ymd),"%Y")==2017)
+df_2018 <- subset(df, format(as.Date(df$ymd),"%Y")==2018)
+df_2019 <- subset(df, format(as.Date(df$ymd),"%Y")==2019)
+```
+
+```{r}
+ggplot(df_2016, mapping=aes(duration)) + 
+  geom_density() + 
+  facet_wrap(~month) +
+  ggtitle("2016 Workouts Duration by Month")
+```
+
+
+```{r}
+ggplot(df_2017, mapping=aes(duration)) + 
+  geom_density() + 
+  facet_wrap(~month) +
+  ggtitle("2017 Workouts Duration by Month")
+```
+
+```{r}
+ggplot(df_2018, mapping=aes(duration)) + 
+  geom_density() + 
+  facet_wrap(~month) +
+  ggtitle("2018 Workouts Duration by Month")
+```
+
+
+```{r}
+ggplot(df_2019, mapping=aes(duration)) + 
+  geom_density() + 
+  facet_wrap(~month) +
+  ggtitle("2019 Workouts Duration by Month")
+```
+
+```{r}
+ggplot(df, aes(workoutType)) +
+  geom_bar(aes(fill=workoutType))
+```
+
